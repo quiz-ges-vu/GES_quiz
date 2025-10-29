@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geschiedenis aan de Vrije Universiteit</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0077B3 0%, #005a87 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0077B3 0%, #005a87 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header img {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+        
+        .content {
+            padding: 50px;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .intro-text {
+            font-size: 18px;
+            color: #334155;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .question-title {
+            font-size: 24px;
+            color: #0077B3;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .question-subtitle {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .path-btn {
+            display: block;
+            width: 100%;
+            padding: 25px 30px;
+            margin: 15px 0;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #0f172a;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .path-btn:hover {
+            border-color: #0077B3;
+            background: #f1f5f9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,119,179,0.15);
+        }
+
+        .path-btn.selected {
+             border-color: #0077B3;
+             background: #e0f2fe;
+        }
+        
+        .ternary-question {
+            margin-bottom: 25px;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #0077B3;
+        }
+        
+        .ternary-text {
+            font-size: 17px;
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .ternary-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .ternary-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            font-weight: 500;
+            color: #475569;
+        }
+        
+        .ternary-btn:hover {
+            border-color: #0077B3;
+            background: #f0f9ff;
+        }
+        
+        .ternary-btn.active {
+            background: #0077B3;
+            color: white;
+            border-color: #0077B3;
+        }
+        
+        .btn-primary {
+            background: #0077B3;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+        
+        .btn-primary:hover {
+            background: #005a87;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,119,179,0.3);
+        }
+        
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #0077B3 0%, #00a8e8 100%);
+            height: 100%;
+            transition: width 0.4s ease;
+            border-radius: 4px;
+        }
+        
+        #results-container .main-title {
+            font-size: 28px;
+            color: #0077B3;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        #results-container .intro-paragraph {
+            font-size: 18px;
+            color: #334155;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+
+        .results-section h4 {
+            font-size: 20px;
+            color: #0077B3;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .results-section p, .results-section li {
+            color: #334155;
+            font-size: 17px;
+            margin-bottom: 25px;
+        }
+
+        #results-container ul {
+            list-style-position: inside;
+            margin-left: 5px;
+            margin-bottom: 25px;
+        }
+
+        #results-container li {
+            margin-bottom: 10px;
+        }
+
+        .special-note {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .special-note h3 {
+             color: #4338ca;
+             font-size: 20px;
+        }
+
+        .special-note p, .special-note a {
+            color: #334155;
+        }
+        
+        .cta-box {
+            background: linear-gradient(135deg, #0077B3 0%, #005a87 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #0077B3;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #f0f9ff;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .content { padding: 30px 20px; }
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 24px; }
+            .ternary-buttons { flex-direction: column; }
+            .ternary-btn { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="VU-logo-RGB.jpg" alt="Vrije Universiteit Amsterdam Logo">
+            <h1>Geschiedenis</h1>
+            <p>VU Amsterdam</p>
+        </div>
+        
+        <div class="content">
+            <div id="intro-screen" class="screen active">
+                <div class="intro-text">
+                    <p style="font-size: 20px; margin-bottom: 20px; font-weight: 600; color: #0f172a;">
+                        Past de opleiding Geschiedenis bij jou?
+                    </p>
+                    <p style="margin-bottom: 15px;">
+                        Deze korte test helpt je te ontdekken hoe onze Nederlandstalige opleiding Geschiedenis aansluit bij jouw interesses en doelen.
+                    </p>
+                    <p style="color: #64748b; font-style: italic;">
+                        Duurt ongeveer 3-4 minuten.
+                    </p>
+                </div>
+                <button class="btn-primary" onclick="startQuiz()">Start de quiz</button>
+            </div>
+            
+            <div id="question-screen" class="screen">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                
+                <div id="question-container"></div>
+                
+                <button class="btn-primary" id="next-btn" onclick="nextQuestion()">
+                    Volgende
+                </button>
+            </div>
+            
+            <div id="results-screen" class="screen">
+                 <div id="results-container"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentQuestion = 0;
+        const answers = {};
+        
+        const questions = [
+            {
+                id: 'q1',
+                type: 'single-choice',
+                title: 'Wat is de belangrijkste reden dat je een Nederlandstalige geschiedenisopleiding overweegt?',
+                options: [
+                    { id: 'native_lang', text: "Studeren in het Nederlands geeft me het vertrouwen om actief deel te nemen en maakt de studie voor mij plezieriger." },
+                    { id: 'dutch_focus', text: "Ik richt me op een carrière in Nederland, bijvoorbeeld in het onderwijs of de erfgoedsector." },
+                    { id: 'exploring', text: "Ik ben me nog aan het oriënteren, maar mijn voorkeur gaat uit naar Nederlands." },
+                    { id: 'english_pref', text: "Eigenlijk studeer ik liever in het Engels, maar ik verken alle opties." }
+                ]
+            },
+            {
+                id: 'q2',
+                type: 'ternary',
+                title: 'Wat trekt je het meest aan in het bestuderen van geschiedenis?',
+                labels: ['Zeer interessant', 'Enigszins interessant', 'Niet interessant'],
+                options: [
+                    { id: 'roots', text: 'De diepe wortels van de Nederlandse en Europese cultuur en samenleving begrijpen.' },
+                    { id: 'critical', text: 'Kritisch leren kijken naar hoe het verleden in het heden wordt gebruikt, bijvoorbeeld in de politiek of media.' },
+                    { id: 'interdisciplinary', text: 'Verbanden leggen tussen verschillende vakgebieden, zoals geschiedenis, politiek en filosofie.' }
+                ]
+            },
+            {
+                id: 'q3',
+                type: 'ternary',
+                title: 'Welke historische onderwerpen of periodes spreken je het meest aan?',
+                labels: ['Zeer interessant', 'Enigszins interessant', 'Niet interessant'],
+                options: [
+                    { id: 'medieval', text: 'De Middeleeuwen en Vroegmoderne Tijd.' },
+                    { id: 'revolutions', text: 'Moderne politieke omwentelingen.' },
+                    { id: 'religion', text: 'De rol van religie in de samenleving.' },
+                    { id: 'antiquity', text: 'De klassieke oudheid (Griekenland, Rome).' },
+                    { id: 'global', text: 'De geschiedenis van regio\'s buiten Europa.' }
+                ]
+            },
+             {
+                id: 'q4',
+                type: 'ternary',
+                title: 'Als historicus, welke van deze activiteiten lijken je het meest boeiend?',
+                labels: ['Zeer boeiend', 'Enigszins boeiend', 'Niet boeiend'],
+                options: [
+                    { id: 'archives', text: 'Werken met originele documenten in een archief.' },
+                    { id: 'research', text: 'Je eigen onafhankelijke onderzoek uitvoeren over een onderwerp dat je fascineert.' },
+                    { id: 'teaching', text: 'Je kennis overdragen en delen met anderen, bijvoorbeeld in het onderwijs.' }
+                ]
+            },
+            {
+                id: 'q5',
+                type: 'ternary',
+                title: 'In welk werkveld zie jij jezelf in de toekomst het liefst?',
+                labels: ['Zeer interessant', 'Enigszins interessant', 'Niet interessant'],
+                options: [
+                    { id: 'education', text: 'Onderwijs (lesgeven op een middelbare school).' },
+                    { id: 'heritage', text: 'Erfgoedsector (musea, archieven).' },
+                    { id: 'journalism', text: 'Journalistiek en Media.' },
+                    { id: 'international', text: 'Een internationale carrière (bijv. bij een NGO).' }
+                ]
+            }
+        ];
+
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('question-screen').classList.add('active');
+            renderQuestion(0);
+        }
+
+        function renderQuestion(index) {
+            const container = document.getElementById('question-container');
+            const question = questions[index];
+            
+            let html = `
+                <h2 class="question-title">${question.title}</h2>
+                ${question.subtitle ? `<p class="question-subtitle">${question.subtitle}</p>` : ''}
+            `;
+            
+            if (question.type === 'single-choice') {
+                question.options.forEach((opt) => {
+                    html += `<button class="path-btn" id="btn-${opt.id}" onclick="answerSingleChoice('${question.id}', '${opt.id}')">${opt.text}</button>`;
+                });
+                document.getElementById('next-btn').style.display = 'none';
+            } else if (question.type === 'ternary') {
+                document.getElementById('next-btn').style.display = 'block';
+                const labels = question.labels;
+                question.options.forEach((opt) => {
+                    html += `
+                        <div class="ternary-question">
+                            <div class="ternary-text">${opt.text}</div>
+                            <div class="ternary-buttons">
+                                <button class="ternary-btn" onclick="answerTernary('${question.id}', '${opt.id}', 'high', event)">${labels[0]}</button>
+                                <button class="ternary-btn" onclick="answerTernary('${question.id}', '${opt.id}', 'medium', event)">${labels[1]}</button>
+                                <button class="ternary-btn" onclick="answerTernary('${question.id}', '${opt.id}', 'low', event)">${labels[2]}</button>
+                            </div>
+                        </div>`;
+                });
+            }
+            
+            container.innerHTML = html;
+            updateProgress();
+            document.getElementById('next-btn').disabled = true;
+        }
+
+        function answerSingleChoice(questionId, optionId) {
+            answers[questionId] = optionId;
+            document.querySelectorAll('.path-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(`btn-${optionId}`).classList.add('selected');
+            setTimeout(() => { nextQuestion(); }, 300);
+        }
+
+        function answerTernary(questionId, optionId, value, event) {
+            const buttons = event.target.parentElement.querySelectorAll('.ternary-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            if (!answers[questionId]) answers[questionId] = {};
+            answers[questionId][optionId] = value;
+            const question = questions[currentQuestion];
+            const allAnswered = question.options.every(opt => answers[questionId] && answers[questionId][opt.id]);
+            document.getElementById('next-btn').disabled = !allAnswered;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                renderQuestion(currentQuestion);
+            } else {
+                showResults();
+            }
+        }
+        
+        function updateProgress() {
+            const progress = (currentQuestion / (questions.length - 1)) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+
+        function showResults() {
+            document.getElementById('question-screen').classList.remove('active');
+            document.getElementById('results-screen').classList.add('active');
+            const resultsHTML = generateResultsHTML();
+            document.getElementById('results-container').innerHTML = resultsHTML;
+        }
+
+        function generateResultsHTML() {
+            let html = `<h2 class="main-title">Jouw profiel voor Geschiedenis</h2>`;
+
+            // --- Triage-based Hook ---
+            const q1_answer = answers.q1;
+            let introHook = '';
+            if (q1_answer === 'native_lang' || q1_answer === 'exploring') {
+                introHook = `<p class="intro-paragraph">Je geeft de voorkeur aan studeren in het Nederlands, en de opleiding Geschiedenis is ontworpen om je die diepgaande leerervaring te bieden. Je zult complexe historische concepten doorgronden en je argumentatievaardigheden aanscherpen in je moedertaal.</p>`;
+            } else if (q1_answer === 'dutch_focus') {
+                introHook = `<p class="intro-paragraph">Je richt je op een carrière in Nederland, en de opleiding Geschiedenis aan de VU Amsterdam is een uitstekende voorbereiding. Dit profiel laat zien hoe de opleiding je helpt je doelen te bereiken.</p>`;
+            }
+            html += introHook;
+
+            // --- HIS Off-Ramp Check ---
+            const q3_global = answers.q3 && answers.q3.global === 'high';
+            const q5_international = answers.q5 && answers.q5.international === 'high';
+            if (q1_answer === 'english_pref' || (q3_global && q5_international)) {
+                html += `<div class="special-note">
+                            <h3>Een tip: verken ook je andere opties</h3>
+                            <p>We zien dat je interesse hebt in een internationale carrière en/of een Engelstalige omgeving. Wist je dat we ook een volledig Engelstalige track aanbieden?</p>
+                            <p style="margin-top:15px;">De opleiding <strong>'History and International Studies' (HIS)</strong> deelt dezelfde filosofie van kleinschalig onderwijs, maar richt zich sterker op mondiale geschiedenis en internationale betrekkingen. Dit is mogelijk een uitstekende match voor jouw doelen.</p>
+                         </div>`;
+            }
+            
+            // --- Core Narrative ---
+            html += `<hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 40px 0;">
+                     <div class="results-section">
+                        <p style="font-size: 18px; color: #0f172a; font-weight: 500;">Hier is wat onze opleiding uniek maakt:</p>
+                        
+                        <h4>Kleinschalig en persoonlijk onderwijs</h4>
+                        <p>Ons programma is op menselijke schaal gebouwd. Je volgt les in <strong>kleine werkgroepen van 15-20 studenten</strong>, niet in anonieme collegezalen. Deze aanpak combineert de persoonlijke aandacht van een liberal arts college met de onderzoeksmogelijkheden van een grote universiteit. Onze docenten kennen je bij naam en begeleiden je persoonlijk in je ontwikkeling tot een zelfstandig denker.</p>
+                        
+                        <h4>Word een betrokken historicus</h4>
+                        <p>Aan de VU Amsterdam leiden we je op tot een <strong>'betrokken historicus'</strong>. We geloven dat geschiedenis een cruciaal instrument is om de hedendaagse samenleving te begrijpen en er op een weloverwogen manier aan deel te nemen. Je leert de essentiële historische en morele context te doorgronden om hedendaagse debatten te begrijpen.</p>
+
+                        <h4>Vrijheid om je eigen pad te vormen</h4>
+                        <p>De opleiding geeft je veel vrijheid om je eigen nieuwsgierigheid te volgen. Dit komt tot uiting in het derde jaar, waar je de flexibiliteit hebt om <strong>in het buitenland te studeren</strong>, een <strong>stage</strong> te lopen, en – het belangrijkste – je <strong>bachelorscriptie over een onderwerp naar vrije keuze</strong> te schrijven.</p>
+                     </div>
+                     <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 40px 0;">`;
+
+            // --- Detailed Personalization ---
+
+            let europeanFocus = '';
+            if(answers.q2 && answers.q2.roots === 'high') {
+                europeanFocus = ' In het bijzonder sluit dit aan bij jouw interesse in de wortels van de Nederlandse en Europese samenleving.';
+            }
+            html += `<h4>Een diepe duik in de Europese geschiedenis met een mondiale blik</h4>
+                     <p>Geschiedenis aan VU Amsterdam biedt een grondige studie van de historische krachten die de moderne wereld hebben gevormd, met speciale aandacht voor Nederland en Europa.${europeanFocus} We onderzoeken kritisch de complexe en vaak problematische erfenis van Europa als motor van mondiale moderniteit.</p>`;
+            
+            let academicPersonalization = '';
+            let academicRecs = [];
+            const q3_answers = answers.q3 || {};
+            if(q3_answers.medieval === 'high') academicRecs.push("Jouw fascinatie voor de Middeleeuwen komt al in het eerste jaar aan bod in ons unieke vak <strong>'Middeleeuws en Vroegmodern Europa'</strong>.");
+            if(q3_answers.revolutions === 'high') academicRecs.push("Je interesse in politieke omwentelingen sluit perfect aan bij de thematische kern van het tweede jaar, met vakken als <strong>'Democratische Revoluties'</strong> en <strong>'Holocaust & Genocide'</strong>.");
+            if(q3_answers.religion === 'high') academicRecs.push("Je kunt je verdiepen in de rol van religie in de maatschappij met het vak <strong>'Religie en Staatsvorming'</strong>.");
+            if(q3_answers.antiquity === 'high') academicRecs.push("Je passie voor de oudheid kan je volop kwijt via onze speciale <strong>ACASA-vakken</strong>, waarmee je je kunt specialiseren in de klassieke wereld.");
+
+            if (academicRecs.length > 0) {
+                academicPersonalization = `<h4>Jouw thematische pad</h4><p>Binnen de opleiding is er veel ruimte om je eigen interesses te volgen. We zien dat je een aantal duidelijke voorkeuren hebt:</p><ul>${academicRecs.map(rec => `<li>${rec}</li>`).join('')}</ul>`;
+            }
+            html += academicPersonalization;
+
+            let vrijeKeuzePersonalization = '';
+            if (answers.q2 && answers.q2.interdisciplinary === 'high') {
+                vrijeKeuzePersonalization = `<p>Jouw interesse in het leggen van verbanden tussen verschillende vakgebieden is een grote kracht. De opleiding moedigt dit aan: je kunt je <strong>12 EC vrije keuzeruimte</strong> gebruiken om vakken te volgen bij bijvoorbeeld Politicologie, Sociologie of Filosofie, en zo een uniek interdisciplinair profiel opbouwen.</p>`;
+            } else {
+                 vrijeKeuzePersonalization = `<p>Daarnaast heb je in het tweede jaar <strong>12 EC volledig vrije keuzeruimte</strong>. Dit stelt je in staat om je horizon te verbreden met vakken van andere opleidingen binnen de faculteit, en zo je eigen unieke profiel samen te stellen.</p>`;
+            }
+             html += `<h4>Stel je eigen unieke profiel samen</h4>${vrijeKeuzePersonalization}`;
+
+            let careerPersonalization = '';
+            const q4_answers = answers.q4 || {};
+            const q5_answers = answers.q5 || {};
+
+            if(q5_answers.education === 'high' || q4_answers.teaching === 'high') {
+                careerPersonalization += `<p>Je doel om leraar te worden sluit naadloos aan op de opleiding Geschiedenis. Het is de ideale en meest directe voorbereiding op de master die je nodig hebt om je eerstegraads lesbevoegdheid te halen.</p>`;
+            }
+            if(q5_answers.heritage === 'high' || q4_answers.archives === 'high') {
+                careerPersonalization += `<p>Jouw interesse in archiefwerk is een perfecte match. In het derde jaar volg je het specialistische vak <strong>'Archieven, Collecties en Digitale Bronnen'</strong>, dat je uitstekend voorbereidt op een carrière in de erfgoedsector.</p>`;
+            }
+             if (careerPersonalization) {
+                 html += `<h4>Jouw pad naar je carrière</h4>${careerPersonalization}`;
+             }
+            
+            // --- Final CTA Box ---
+             html += `
+                <div class="cta-box">
+                    <h3>Klaar voor de volgende stap?</h3>
+                    <p style="margin-bottom: 20px;">Verken de officiële opleidingspagina voor meer informatie over het curriculum, toelatingseisen en het studentenleven.</p>
+                    <div class="cta-buttons">
+                        <a href="https://vu.nl/nl/onderwijs/bachelor/geschiedenis" target="_blank" class="btn-secondary">Bekijk de opleiding</a>
+                        <button onclick="window.location.reload();" class="btn-secondary">Doe de quiz opnieuw</button>
+                    </div>
+                </div>`;
+
+            return html;
+        }
+
+    </script>
+</body>
+</html>
